@@ -3,9 +3,9 @@ package ru.effectivemobile.socialmedia.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-
 import java.util.List;
 import java.util.Set;
 
@@ -17,18 +17,21 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "username", nullable = false, unique = true, length = 30)
+    @Column(name = "username", unique = true, length = 30)
+    @NotNull
     @NotEmpty(message = "Username should not be empty")
     @Size(min = 2, max = 30, message = "Username should be between 2 and 30 characters")
     private String username;
 
-    @Column(name = "email", nullable = false, unique = true, length = 45)
+    @Column(name = "email", unique = true, length = 45)
+    @NotNull
     @Email
     @NotEmpty(message = "Email should not be empty")
     @Size(max = 45, message = "Email should not be greater than 45 characters")
     private String email;
 
-    @Column(name = "password", nullable = false, length = 30)
+    @Column(name = "password", length = 30)
+    @NotNull
     @NotEmpty(message = "Password should not be empty")
     @Size(max = 30, message = "Password should not be greater than 30 characters")
     private String password;
@@ -47,20 +50,19 @@ public class User {
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_subscriber",
-            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "subscriber_id", referencedColumnName = "id"))
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "subscriber_id"))
     private Set<User> subscribers;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_subscribe",
-            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "subscribe_id", referencedColumnName = "id"))
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "subscribe_id"))
     private Set<User> subscribes;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_friend",
-            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false),
-            inverseJoinColumns = @JoinColumn(name = "friend_id", referencedColumnName = "id", nullable = false))
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "friend_id"))
     private Set<User> friends;
-
 }
