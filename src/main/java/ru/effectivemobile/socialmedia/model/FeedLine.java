@@ -1,21 +1,21 @@
 package ru.effectivemobile.socialmedia.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
 @Entity
+@Table(name = "feed_line")
 public class FeedLine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @OneToOne(mappedBy = "feedLine")
     private User owner;
 
+    @OneToMany()
     private List<Post> posts;
 }

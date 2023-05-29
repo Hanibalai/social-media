@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Data
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +29,8 @@ public class User {
     private String email;
 
     @Column(name = "password", nullable = false, length = 30)
-    @Size(max = 30, message = "Password should not be greater than 30")
+    @NotEmpty(message = "Password should not be empty")
+    @Size(max = 30, message = "Password should not be greater than 30 characters")
     private String password;
 
     @ManyToMany(cascade = CascadeType.MERGE)
@@ -46,13 +47,20 @@ public class User {
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_subscriber",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "subscriber_id"))
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "subscriber_id", referencedColumnName = "id"))
     private Set<User> subscribers;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_subscribe",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "subscribe_id"))
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "subscribe_id", referencedColumnName = "id"))
     private Set<User> subscribes;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "user_friend",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "friend_id", referencedColumnName = "id", nullable = false))
+    private Set<User> friends;
+
 }
