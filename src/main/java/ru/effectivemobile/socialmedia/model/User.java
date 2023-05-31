@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.Data;
 import java.util.List;
 import java.util.Set;
 
@@ -20,20 +19,17 @@ public class User {
     @Column(name = "username", unique = true, length = 30)
     @NotNull
     @NotEmpty(message = "Username should not be empty")
-    @Size(min = 2, max = 30, message = "Username should be between 2 and 30 characters")
     private String username;
 
     @Column(name = "email", unique = true, length = 45)
     @NotNull
     @Email
     @NotEmpty(message = "Email should not be empty")
-    @Size(max = 45, message = "Email should not be greater than 45 characters")
     private String email;
 
-    @Column(name = "password", length = 30)
+    @Column(name = "password")
     @NotNull
     @NotEmpty(message = "Password should not be empty")
-    @Size(max = 30, message = "Password should not be greater than 30 characters")
     private String password;
 
     @ManyToMany(cascade = CascadeType.MERGE)
@@ -65,4 +61,14 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "friend_id"))
     private Set<User> friends;
+
+    public User(String username, String email, String password) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
+
+    public User() {
+
+    }
 }
