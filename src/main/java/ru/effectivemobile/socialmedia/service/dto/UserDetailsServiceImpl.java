@@ -1,4 +1,4 @@
-package ru.effectivemobile.socialmedia.service;
+package ru.effectivemobile.socialmedia.service.dto;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.effectivemobile.socialmedia.model.User;
 import ru.effectivemobile.socialmedia.repository.UserRepository;
+import ru.effectivemobile.socialmedia.service.dto.UserDetailsImpl;
 
 
 @Service

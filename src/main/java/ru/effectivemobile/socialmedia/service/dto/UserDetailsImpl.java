@@ -1,4 +1,4 @@
-package ru.effectivemobile.socialmedia.service;
+package ru.effectivemobile.socialmedia.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
