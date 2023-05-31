@@ -14,17 +14,18 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "user")
-    private String username;
-
     @Column(name = "text")
     private String text;
 
-    @Column(name = "header", length = 50)
+    @Column(name = "header")
     private String header;
 
     @Column(name = "image")
     private byte[] image;
+
+    @ManyToOne
+    @JoinColumn(name = "user")
+    private User user;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
