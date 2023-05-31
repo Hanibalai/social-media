@@ -1,4 +1,4 @@
-package ru.effectivemobile.socialmedia.pojo;
+package ru.effectivemobile.socialmedia.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
