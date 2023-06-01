@@ -9,17 +9,17 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import ru.effectivemobile.socialmedia.config.jwt.JwtUtils;
-import ru.effectivemobile.socialmedia.dto.JwtResponse;
-import ru.effectivemobile.socialmedia.dto.LoginRequest;
-import ru.effectivemobile.socialmedia.dto.MessageResponse;
-import ru.effectivemobile.socialmedia.dto.SignupRequest;
+import ru.effectivemobile.socialmedia.security.jwt.JwtUtils;
+import ru.effectivemobile.socialmedia.dto.response.JwtResponse;
+import ru.effectivemobile.socialmedia.dto.request.LoginRequest;
+import ru.effectivemobile.socialmedia.dto.response.MessageResponse;
+import ru.effectivemobile.socialmedia.dto.request.SignupRequest;
 import ru.effectivemobile.socialmedia.model.ERole;
 import ru.effectivemobile.socialmedia.model.Role;
 import ru.effectivemobile.socialmedia.model.User;
 import ru.effectivemobile.socialmedia.repository.RoleRepository;
 import ru.effectivemobile.socialmedia.repository.UserRepository;
-import ru.effectivemobile.socialmedia.service.dto.UserDetailsImpl;
+import ru.effectivemobile.socialmedia.security.UserDetailsImpl;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,12 +30,11 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @AllArgsConstructor
 public class AuthController {
-
-    AuthenticationManager authenticationManager;
-    UserRepository userRepository;
-    RoleRepository roleRepository;
-    PasswordEncoder passwordEncoder;
-    JwtUtils jwtUtils;
+    private AuthenticationManager authenticationManager;
+    private UserRepository userRepository;
+    private RoleRepository roleRepository;
+    private PasswordEncoder passwordEncoder;
+    private JwtUtils jwtUtils;
 
     @PostMapping("/signin")
     public ResponseEntity<?> authUser(@RequestBody LoginRequest loginRequest) {
