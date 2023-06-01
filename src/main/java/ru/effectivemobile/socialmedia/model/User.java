@@ -23,7 +23,7 @@ public class User {
 
     @Column(name = "email", unique = true, length = 45)
     @NotNull
-    @Email
+    @Email(message = "Invalid email")
     @NotEmpty(message = "Email should not be empty")
     private String email;
 
@@ -38,23 +38,26 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(name = "user_subscriber",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "subscriber_id"))
-    private Set<User> subscribers;
+    private List<User> subscribers;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(name = "user_subscribe",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "subscribe_id"))
-    private Set<User> subscribes;
+    private List<User> subscribes;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(name = "user_friend",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "friend_id"))
     private Set<User> friends;
+
+    @OneToMany(mappedBy = "recipient", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Invitation> invitations;
 
     public User(String username, String email, String password) {
         this.username = username;
