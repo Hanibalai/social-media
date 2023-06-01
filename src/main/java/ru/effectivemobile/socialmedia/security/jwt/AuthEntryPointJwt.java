@@ -1,4 +1,4 @@
-package ru.effectivemobile.socialmedia.config.jwt;
+package ru.effectivemobile.socialmedia.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;

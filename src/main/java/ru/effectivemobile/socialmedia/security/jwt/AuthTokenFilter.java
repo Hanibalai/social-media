@@ -1,4 +1,4 @@
-package ru.effectivemobile.socialmedia.config.jwt;
+package ru.effectivemobile.socialmedia.security.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -13,7 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.effectivemobile.socialmedia.service.dto.UserDetailsServiceImpl;
+import ru.effectivemobile.socialmedia.security.UserDetailsServiceImpl;
 
 import java.io.IOException;
 

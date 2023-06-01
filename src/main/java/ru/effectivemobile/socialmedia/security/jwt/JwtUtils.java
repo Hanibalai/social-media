@@ -1,4 +1,4 @@
-package ru.effectivemobile.socialmedia.config.jwt;
+package ru.effectivemobile.socialmedia.security.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-import ru.effectivemobile.socialmedia.service.dto.UserDetailsImpl;
+import ru.effectivemobile.socialmedia.security.UserDetailsImpl;
 
 import java.security.Key;
 import java.util.Date;

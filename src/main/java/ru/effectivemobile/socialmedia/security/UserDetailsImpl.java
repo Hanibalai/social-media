@@ -1,4 +1,4 @@
-package ru.effectivemobile.socialmedia.service.dto;
+package ru.effectivemobile.socialmedia.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -7,7 +7,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.effectivemobile.socialmedia.model.User;
-
 import java.io.Serial;
 import java.util.Collection;
 import java.util.List;

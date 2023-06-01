@@ -1,4 +1,4 @@
-package ru.effectivemobile.socialmedia.dto;
+package ru.effectivemobile.socialmedia.dto.response;
 
 import lombok.Getter;
 import lombok.Setter;
