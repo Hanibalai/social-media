@@ -1,8 +1,10 @@
-package ru.effectivemobile.socialmedia.dto;
+package ru.effectivemobile.socialmedia.web.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import ru.effectivemobile.socialmedia.model.Post;
+import ru.effectivemobile.socialmedia.model.User;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -19,4 +21,12 @@ public class PostDto implements Serializable {
     private String header;
     private String text;
     private byte[] image;
+
+    public static PostDto build(Post post, User user) {
+        return new PostDto(post.getId(),
+                user.getUsername(),
+                post.getHeader(),
+                post.getText(),
+                post.getImage());
+    }
 }
