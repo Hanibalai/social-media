@@ -1,4 +1,4 @@
-package ru.effectivemobile.socialmedia.controller;
+package ru.effectivemobile.socialmedia.web.controller;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
