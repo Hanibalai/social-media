@@ -2,11 +2,19 @@ package ru.effectivemobile.socialmedia.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.effectivemobile.socialmedia.exception.InvitationErrorException;
+import ru.effectivemobile.socialmedia.exception.RequestBodyErrorException;
+import ru.effectivemobile.socialmedia.model.Invitation;
 import ru.effectivemobile.socialmedia.model.Post;
 import ru.effectivemobile.socialmedia.model.User;
+import ru.effectivemobile.socialmedia.repository.InvitationRepository;
 import ru.effectivemobile.socialmedia.repository.PostRepository;
 import ru.effectivemobile.socialmedia.repository.UserRepository;
+import ru.effectivemobile.socialmedia.web.dto.response.MessageResponse;
 
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 @Service
@@ -16,31 +24,29 @@ public class UserService {
     private UserRepository userRepository;
 
     private PostRepository postRepository;
+    private InvitationRepository invitationRepository;
 
-//    public void saveUser(UserDetailsImpl userDto) {
-//        Optional<User> optionalUser = userRepository.findByEmail(userDto.getEmail());
-//        if (optionalUser.isPresent()) {
-//            User user = optionalUser.get();
-//            userRepository.save(user);
-//        }
-//    }
-//
-//    public User getUser(String email) {
-//        Optional<User> optionalUser = userRepository.findByEmail(email);
-//        return optionalUser.orElse(null);
-//    }
-//
-//    public List<User> getAllUsers() {
-//        return userRepository.findAll();
-//    }
+    @Transactional
+    public void inviteFriend(String username, String invitedFriendUsername) throws InvitationErrorException,
+            RequestBodyErrorException {
 
-    public List<Post> getUserPosts(User user) {
-        return postRepository.findPostByUserOrderById(user);
+        User user = userRepository.findByUsername(username).orElse(null);
+        User invitedUser = userRepository.findByUsername(invitedFriendUsername).orElse(null);
+        if (user != null && invitedUser != null) {
+            user.getSubscribes().add(invitedUser);
+            invitedUser.getSubscribers().add(user);
+            Invitation invitation = new Invitation();
+            invitation.setSender(user);
+            invitation.setRecipient(invitedUser);
+            try {
+                invitationRepository.save(invitation);
+                userRepository.save(user);
+                userRepository.save(invitedUser);
+            } catch (Exception e) {
+                throw new InvitationErrorException();
+            }
+        } else {
+            throw new RequestBodyErrorException();
+        }
     }
-
-    public User getUser(String email) {
-        return userRepository.findByEmail(email).orElse(null);
-    }
-
-
 }
