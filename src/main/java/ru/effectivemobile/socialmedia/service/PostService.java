@@ -2,7 +2,8 @@ package ru.effectivemobile.socialmedia.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.effectivemobile.socialmedia.dto.PostDto;
+import ru.effectivemobile.socialmedia.exception.RequestBodyErrorException;
+import ru.effectivemobile.socialmedia.web.dto.PostDto;
 import ru.effectivemobile.socialmedia.model.Post;
 import ru.effectivemobile.socialmedia.model.User;
 import ru.effectivemobile.socialmedia.repository.PostRepository;
@@ -17,47 +18,37 @@ public class PostService {
     private PostRepository postRepository;
     private UserRepository userRepository;
 
-    public List<PostDto> getPostsOfUser(String username) {
+    public List<PostDto> getUserPosts(String username) throws RequestBodyErrorException {
         List<PostDto> postDtoList = new ArrayList<>();
         User user = userRepository.findByUsername(username).orElse(null);
         if (user != null) {
             List<Post> postList = postRepository.findPostByUserOrderById(user);
-            for (Post post : postList) {
-                postDtoList.add(pack(post, user));
-            }
+            for (Post post : postList)
+                postDtoList.add(PostDto.build(post, user));
         } else {
-            System.out.println("User not found");
+            throw new RequestBodyErrorException();
         }
         return postDtoList;
     }
 
-    public PostDto savePost(String username, Post post) {
+    public PostDto savePost(String username, Post post) throws RequestBodyErrorException {
         User user = userRepository.findByUsername(username).orElse(null);
         if (user != null) {
             post.setUser(user);
             Post createdPost = postRepository.save(post);
-            return pack(createdPost, user);
+            return PostDto.build(createdPost, user);
+        } else {
+            throw new RequestBodyErrorException();
         }
-        System.out.println("User not found");
-        return null;
     }
 
-    public boolean deletePost(String username, long postId) {
+    public void deletePost(String username, long postId) throws RequestBodyErrorException {
         Post post = postRepository.getPostById(postId).orElse(null);
         User user = userRepository.findByUsername(username).orElse(null);
         if (post != null && user != null && post.getUser() == user) {
             postRepository.delete(post);
-            return true;
+        } else {
+            throw new RequestBodyErrorException();
         }
-        System.out.println("Error: " + post + "\n" + user);
-        return false;
-    }
-
-    private static PostDto pack(Post post, User user) {
-        return new PostDto(post.getId(),
-                user.getUsername(),
-                post.getHeader(),
-                post.getText(),
-                post.getImage());
     }
 }
