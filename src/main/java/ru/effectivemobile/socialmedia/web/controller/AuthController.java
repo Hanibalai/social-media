@@ -1,4 +1,4 @@
-package ru.effectivemobile.socialmedia.controller;
+package ru.effectivemobile.socialmedia.web.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -10,16 +10,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import ru.effectivemobile.socialmedia.security.jwt.JwtUtils;
-import ru.effectivemobile.socialmedia.dto.response.JwtResponse;
-import ru.effectivemobile.socialmedia.dto.request.LoginRequest;
-import ru.effectivemobile.socialmedia.dto.response.MessageResponse;
-import ru.effectivemobile.socialmedia.dto.request.SignupRequest;
+import ru.effectivemobile.socialmedia.web.dto.response.JwtResponse;
+import ru.effectivemobile.socialmedia.web.dto.request.LoginRequest;
+import ru.effectivemobile.socialmedia.web.dto.response.MessageResponse;
+import ru.effectivemobile.socialmedia.web.dto.request.SignupRequest;
 import ru.effectivemobile.socialmedia.model.ERole;
 import ru.effectivemobile.socialmedia.model.Role;
 import ru.effectivemobile.socialmedia.model.User;
 import ru.effectivemobile.socialmedia.repository.RoleRepository;
 import ru.effectivemobile.socialmedia.repository.UserRepository;
 import ru.effectivemobile.socialmedia.security.UserDetailsImpl;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
