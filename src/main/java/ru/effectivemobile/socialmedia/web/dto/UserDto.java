@@ -1,4 +1,4 @@
-package ru.effectivemobile.socialmedia.dto;
+package ru.effectivemobile.socialmedia.web.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
