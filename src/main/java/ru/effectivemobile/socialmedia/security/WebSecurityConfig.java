@@ -1,4 +1,4 @@
-package ru.effectivemobile.socialmedia.config;
+package ru.effectivemobile.socialmedia.security;
 
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -17,8 +17,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import ru.effectivemobile.socialmedia.config.jwt.AuthEntryPointJwt;
-import ru.effectivemobile.socialmedia.config.jwt.AuthTokenFilter;
+import ru.effectivemobile.socialmedia.security.jwt.AuthEntryPointJwt;
+import ru.effectivemobile.socialmedia.security.jwt.AuthTokenFilter;
 
 @EnableWebSecurity
 @Configuration
@@ -88,6 +88,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/api/auth/**").permitAll()
                                 .requestMatchers("/api/test/**").permitAll()
+                                .requestMatchers("/api/user/**").permitAll()
                                 .anyRequest().authenticated()
                 );
 
