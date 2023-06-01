@@ -6,18 +6,16 @@ import ru.effectivemobile.socialmedia.model.Post;
 import ru.effectivemobile.socialmedia.model.User;
 import ru.effectivemobile.socialmedia.repository.PostRepository;
 import ru.effectivemobile.socialmedia.repository.UserRepository;
-import ru.effectivemobile.socialmedia.service.dto.UserDetailsImpl;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class UserService {
 
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
-    PostRepository postRepository;
+    private PostRepository postRepository;
 
 //    public void saveUser(UserDetailsImpl userDto) {
 //        Optional<User> optionalUser = userRepository.findByEmail(userDto.getEmail());
@@ -39,4 +37,10 @@ public class UserService {
     public List<Post> getUserPosts(User user) {
         return postRepository.findPostByUserOrderById(user);
     }
+
+    public User getUser(String email) {
+        return userRepository.findByEmail(email).orElse(null);
+    }
+
+
 }
