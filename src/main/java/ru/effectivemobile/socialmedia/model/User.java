@@ -38,12 +38,6 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinTable(name = "user_post",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "post_id"))
-    private List<Post> postList;
-
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_subscriber",
             joinColumns = @JoinColumn(name = "user_id"),
