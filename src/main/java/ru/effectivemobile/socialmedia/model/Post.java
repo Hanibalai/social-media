@@ -24,7 +24,7 @@ public class Post {
     private byte[] image;
 
     @ManyToOne
-    @JoinColumn(name = "user")
+    @JoinColumn(name = "user", referencedColumnName = "id")
     private User user;
 
     @CreationTimestamp
