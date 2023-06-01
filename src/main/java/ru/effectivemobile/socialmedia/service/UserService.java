@@ -3,19 +3,11 @@ package ru.effectivemobile.socialmedia.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.effectivemobile.socialmedia.exception.InvitationErrorException;
-import ru.effectivemobile.socialmedia.exception.RequestBodyErrorException;
 import ru.effectivemobile.socialmedia.model.Invitation;
-import ru.effectivemobile.socialmedia.model.Post;
 import ru.effectivemobile.socialmedia.model.User;
 import ru.effectivemobile.socialmedia.repository.InvitationRepository;
 import ru.effectivemobile.socialmedia.repository.PostRepository;
 import ru.effectivemobile.socialmedia.repository.UserRepository;
-import ru.effectivemobile.socialmedia.web.dto.response.MessageResponse;
-
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -27,8 +19,7 @@ public class UserService {
     private InvitationRepository invitationRepository;
 
     @Transactional
-    public void inviteFriend(String username, String invitedFriendUsername) throws InvitationErrorException,
-            RequestBodyErrorException {
+    public void inviteFriend(String username, String invitedFriendUsername) {
 
         User user = userRepository.findByUsername(username).orElse(null);
         User invitedUser = userRepository.findByUsername(invitedFriendUsername).orElse(null);
@@ -43,10 +34,10 @@ public class UserService {
                 userRepository.save(user);
                 userRepository.save(invitedUser);
             } catch (Exception e) {
-                throw new InvitationErrorException();
+                throw new RuntimeException("There is an error in the request body");
             }
         } else {
-            throw new RequestBodyErrorException();
+            throw new RuntimeException("There is an error in the request body");
         }
     }
 }

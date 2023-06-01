@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import ru.effectivemobile.socialmedia.exception.InvitationErrorException;
-import ru.effectivemobile.socialmedia.exception.RequestBodyErrorException;
 import ru.effectivemobile.socialmedia.model.Post;
 import ru.effectivemobile.socialmedia.service.PostService;
 import ru.effectivemobile.socialmedia.service.UserService;
@@ -28,7 +26,7 @@ public class UserController {
         try {
             List<PostDto> userPosts = postService.getUserPosts(username);
             return ResponseEntity.ok(userPosts);
-        } catch (RequestBodyErrorException e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
@@ -38,7 +36,7 @@ public class UserController {
         try {
             PostDto createdPost = postService.savePost(username, post);
             return ResponseEntity.ok(createdPost);
-        } catch (RequestBodyErrorException e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
@@ -49,7 +47,7 @@ public class UserController {
         try {
             postService.deletePost(username, postId);
             return ResponseEntity.ok(new MessageResponse("Post was successfully deleted"));
-        } catch (RequestBodyErrorException e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
@@ -59,7 +57,7 @@ public class UserController {
         try {
             List<PostDto> visitedUserPosts = postService.getUserPosts(visitedUsername);
             return ResponseEntity.ok(visitedUserPosts);
-        } catch (RequestBodyErrorException e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
@@ -70,10 +68,8 @@ public class UserController {
         try {
             userService.inviteFriend(username, invitedUsername);
             return ResponseEntity.ok(new MessageResponse("Friend invitation was successfully sent"));
-        } catch (InvitationErrorException e) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Invitations is already sent"));
-        } catch (RequestBodyErrorException e) {
-            return ResponseEntity.badRequest().body(new MessageResponse("There is an error in the request body"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
 }
