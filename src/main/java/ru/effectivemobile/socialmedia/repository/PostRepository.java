@@ -6,6 +6,7 @@ import ru.effectivemobile.socialmedia.model.Post;
 import ru.effectivemobile.socialmedia.model.User;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
@@ -14,5 +15,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findAllByOrderByIdDesc();
 
-    List<Post> findAllByUserOrderById(User user);
+    List<Post> findAllByUserOrderByIdDesc(User user);
+
+    Optional<Post> getPostById(long id);
 }
