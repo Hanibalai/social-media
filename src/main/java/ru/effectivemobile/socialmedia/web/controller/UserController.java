@@ -42,7 +42,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{username}/deletepost/{id}")
+    @GetMapping("/{username}/{id}/deletepost")
     public ResponseEntity<?> deletePost(@PathVariable("username") String username,
                                         @PathVariable("id") long postId) {
         try {
@@ -63,14 +63,24 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{username}/invite/{invitedUsername}")
-    public ResponseEntity<?> inviteFriend(@PathVariable String username,
-                                          @PathVariable String invitedUsername) {
+    @GetMapping("/{sender}/{recipient}/invite")
+    public ResponseEntity<?> invite(@PathVariable String sender,
+                                    @PathVariable String recipient) {
         try {
-            userService.inviteFriend(username, invitedUsername);
+            userService.invite(sender, recipient);
             return ResponseEntity.ok(new MessageResponse("Friend invitation was successfully sent"));
         } catch (BadRequestException e) {
-            System.out.println(e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/{recipient}/{sender}/accept")
+    public ResponseEntity<?> accept(@PathVariable String recipient,
+                                    @PathVariable String sender) {
+        try {
+            userService.acceptInvite(recipient, sender);
+            return ResponseEntity.ok(new MessageResponse("Friend invitation was successfully accepted"));
+        } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
