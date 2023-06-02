@@ -32,7 +32,7 @@ public class User {
     @NotEmpty(message = "Password should not be empty")
     private String password;
 
-    @ManyToMany(cascade = CascadeType.MERGE)
+    @ManyToMany
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
