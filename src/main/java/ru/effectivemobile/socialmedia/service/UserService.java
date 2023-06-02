@@ -3,6 +3,7 @@ package ru.effectivemobile.socialmedia.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.effectivemobile.socialmedia.exception.InvitationException;
 import ru.effectivemobile.socialmedia.model.Invitation;
 import ru.effectivemobile.socialmedia.model.User;
 import ru.effectivemobile.socialmedia.repository.InvitationRepository;
@@ -31,11 +32,11 @@ public class UserService {
             invitation.setRecipient(invitedUser);
             try {
                 invitationRepository.save(invitation);
-                userRepository.save(user);
-                userRepository.save(invitedUser);
             } catch (Exception e) {
-                throw new RuntimeException("There is an error in the request body");
+                throw new RuntimeException("The invitation has already been sent to this user before");
             }
+            userRepository.save(user);
+            userRepository.save(invitedUser);
         } else {
             throw new RuntimeException("There is an error in the request body");
         }
