@@ -10,29 +10,25 @@ import ru.effectivemobile.socialmedia.repository.PostRepository;
 import ru.effectivemobile.socialmedia.repository.UserRepository;
 import ru.effectivemobile.socialmedia.web.dto.PostDto;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @AllArgsConstructor
 public class PostService {
     private PostRepository postRepository;
     private UserRepository userRepository;
 
-    @Transactional
     public List<PostDto> getUserPosts(String username) {
-        List<PostDto> postDtoList = new ArrayList<>();
         User user = userRepository.findByUsername(username).orElse(null);
         if (user == null) {
             throw new BadRequestException("Failed to get the list of user's posts: Invalid username");
         }
-        List<Post> postList = postRepository.findPostByUserOrderById(user);
-        for (Post post : postList)
-            postDtoList.add(PostDto.build(post, user));
-        return postDtoList;
+        List<Post> postList = postRepository.findPostsByUserOrderById(user);
+        return postList.stream().map(post -> PostDto.build(post, user)).collect(Collectors.toList());
     }
 
-    @Transactional
     public PostDto savePost(String username, Post post) {
         User user = userRepository.findByUsername(username).orElse(null);
         if (user == null) {
@@ -43,15 +39,14 @@ public class PostService {
         return PostDto.build(createdPost, user);
     }
 
-    @Transactional
-    public void deletePost(String username, long postId) {
+    public void removePost(String username, long postId) {
         Post post = postRepository.getPostById(postId).orElse(null);
         if (post == null) {
-            throw new BadRequestException("Failed to delete the post: Invalid post ID number");
+            throw new BadRequestException("Failed to remove the post: Invalid post ID number");
         }
         User user = userRepository.findByUsername(username).orElse(null);
         if (user == null) {
-            throw new BadRequestException("Failed to delete the post: Invalid username");
+            throw new BadRequestException("Failed to remove the post: Invalid username");
         }
         postRepository.delete(post);
     }
