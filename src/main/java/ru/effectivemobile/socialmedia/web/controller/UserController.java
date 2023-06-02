@@ -24,14 +24,7 @@ public class UserController {
 
     @GetMapping("/{username}")
     public ResponseEntity<?> myPage(@PathVariable("username") String username) {
-        try {
-            List<PostDto> userPosts = postService.getUserPosts(username);
-            return ResponseEntity.ok(userPosts);
-        } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(new MessageResponse("Server error"));
-        }
+        return getPostPage(username);
     }
 
     @PostMapping("/{username}/addpost")
@@ -61,14 +54,7 @@ public class UserController {
 
     @GetMapping("/visit/{username}")
     public ResponseEntity<?> visitPage(@PathVariable("username") String visitedUsername) {
-        try {
-            List<PostDto> visitedUserPosts = postService.getUserPosts(visitedUsername);
-            return ResponseEntity.ok(visitedUserPosts);
-        } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(new MessageResponse("Server error"));
-        }
+        return getPostPage(visitedUsername);
     }
 
     @GetMapping("/{sender}/{recipient}/invite")
@@ -90,6 +76,17 @@ public class UserController {
         try {
             userService.acceptInvite(recipient, invitationId);
             return ResponseEntity.ok(new MessageResponse("Friend invitation was successfully accepted"));
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new MessageResponse("Server error"));
+        }
+    }
+
+    private ResponseEntity<?> getPostPage(@PathVariable("username") String username) {
+        try {
+            List<PostDto> userPosts = postService.getUserPosts(username);
+            return ResponseEntity.ok(userPosts);
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         } catch (Exception e) {
