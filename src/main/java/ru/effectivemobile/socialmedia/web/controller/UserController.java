@@ -29,6 +29,8 @@ public class UserController {
             return ResponseEntity.ok(userPosts);
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new MessageResponse("Server error"));
         }
     }
 
@@ -39,6 +41,8 @@ public class UserController {
             return ResponseEntity.ok(createdPost);
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new MessageResponse("Server error"));
         }
     }
 
@@ -50,6 +54,8 @@ public class UserController {
             return ResponseEntity.ok(new MessageResponse("Post was successfully deleted"));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new MessageResponse("Server error"));
         }
     }
 
@@ -60,6 +66,8 @@ public class UserController {
             return ResponseEntity.ok(visitedUserPosts);
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new MessageResponse("Server error"));
         }
     }
 
@@ -71,17 +79,21 @@ public class UserController {
             return ResponseEntity.ok(new MessageResponse("Friend invitation was successfully sent"));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new MessageResponse("Server error"));
         }
     }
 
-    @GetMapping("/{recipient}/{sender}/accept")
+    @GetMapping("/{recipient}/{invitationId}/accept")
     public ResponseEntity<?> accept(@PathVariable String recipient,
-                                    @PathVariable String sender) {
+                                    @PathVariable long invitationId) {
         try {
-            userService.acceptInvite(recipient, sender);
+            userService.acceptInvite(recipient, invitationId);
             return ResponseEntity.ok(new MessageResponse("Friend invitation was successfully accepted"));
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new MessageResponse("Server error"));
         }
     }
 }
