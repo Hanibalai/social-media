@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface InvitationRepository extends JpaRepository<Invitation, Long> {
     List<Invitation> getInvitationByRecipientOrderByIdDesc(User recipient);
+    boolean existsBySenderAndRecipient(User sender, User recipient);
 }
