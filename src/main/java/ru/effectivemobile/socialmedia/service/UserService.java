@@ -9,15 +9,18 @@ import ru.effectivemobile.socialmedia.model.Invitation;
 import ru.effectivemobile.socialmedia.model.User;
 import ru.effectivemobile.socialmedia.repository.InvitationRepository;
 import ru.effectivemobile.socialmedia.repository.UserRepository;
+import ru.effectivemobile.socialmedia.web.dto.UserDto;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @AllArgsConstructor
 public class UserService {
-
     private UserRepository userRepository;
     private InvitationRepository invitationRepository;
 
-    @Transactional()
     public void invite(String senderUsername, String recipientUsername) {
         User sender = userRepository.findByUsername(senderUsername).orElse(null);
         if (sender == null) {
@@ -43,14 +46,13 @@ public class UserService {
         invitationRepository.save(invitation);
     }
 
-    @Transactional
     public void acceptInvite(String recipientUsername, long invitationId) {
         User recipient = userRepository.findByUsername(recipientUsername).orElse(null);
         if (recipient == null) {
             throw new BadRequestException("Failed to accept friend invite: Invalid recipient username");
         }
         Invitation invitation = invitationRepository.getInvitationById(invitationId).orElse(null);
-        if (invitation == null) {
+        if (invitation == null || !recipient.getInvitations().contains(invitation)) {
             throw new InvitationErrorException("Failed to accept friend invite: The invitation does not exist");
         }
         User sender = invitation.getSender();
@@ -61,5 +63,31 @@ public class UserService {
         userRepository.save(recipient);
         userRepository.save(sender);
         invitationRepository.delete(invitation);
+    }
+
+    public void removeFriend(String username, String friendUsername) {
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user == null) {
+            throw new BadRequestException("Failed to remove user from friends: Invalid username");
+        }
+        User friend = userRepository.findByUsername(friendUsername).orElse(null);
+        if (friend == null || friend.equals(user) || !user.getFriends().contains(friend)) {
+            throw new BadRequestException("Failed to remove friend: Friend with this username does not exist");
+        }
+        user.getFriends().remove(friend);
+        user.getSubscribes().remove(friend);
+        friend.getFriends().remove(user);
+        friend.getSubscribers().remove(user);
+        userRepository.save(friend);
+        userRepository.save(user);
+    }
+
+    public List<UserDto> getUserFriends(String username) {
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user == null) {
+            throw new BadRequestException("Failed to get list of friend: Invalid username");
+        }
+        List<User> friendList = user.getFriends();
+        return friendList.stream().map(UserDto::build).collect(Collectors.toList());
     }
 }
