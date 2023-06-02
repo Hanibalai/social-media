@@ -3,6 +3,7 @@ package ru.effectivemobile.socialmedia.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.effectivemobile.socialmedia.exception.BadRequestException;
 import ru.effectivemobile.socialmedia.exception.InvitationException;
 import ru.effectivemobile.socialmedia.model.Invitation;
 import ru.effectivemobile.socialmedia.model.User;
@@ -15,30 +16,27 @@ import ru.effectivemobile.socialmedia.repository.UserRepository;
 public class UserService {
 
     private UserRepository userRepository;
-
-    private PostRepository postRepository;
     private InvitationRepository invitationRepository;
 
-    @Transactional
+    @Transactional()
     public void inviteFriend(String username, String invitedFriendUsername) {
 
-        User user = userRepository.findByUsername(username).orElse(null);
-        User invitedUser = userRepository.findByUsername(invitedFriendUsername).orElse(null);
-        if (user != null && invitedUser != null) {
-            user.getSubscribes().add(invitedUser);
-            invitedUser.getSubscribers().add(user);
-            Invitation invitation = new Invitation();
-            invitation.setSender(user);
-            invitation.setRecipient(invitedUser);
-            try {
-                invitationRepository.save(invitation);
-            } catch (Exception e) {
-                throw new RuntimeException("The invitation has already been sent to this user before");
-            }
-            userRepository.save(user);
-            userRepository.save(invitedUser);
-        } else {
-            throw new RuntimeException("There is an error in the request body");
+        User sender = userRepository.findByUsername(username).orElse(null);
+        if (sender == null) {
+            throw new BadRequestException("Failed to invite: Invalid sender username");
         }
+        User recipient = userRepository.findByUsername(invitedFriendUsername).orElse(null);
+        if (recipient == null) {
+            throw new BadRequestException("Failed to invite: Invalid recipient username");
+        }
+        Invitation invitation = new Invitation();
+        invitation.setSender(sender);
+        invitation.setRecipient(recipient);
+        if (invitationRepository.existsBySenderAndRecipient(sender, recipient)) {
+            throw new InvitationException("Failed to invite: This invitation has already been sent before");
+        }
+        sender.getSubscribes().add(recipient);
+        recipient.getSubscribers().add(sender);
+        invitationRepository.save(invitation);
     }
 }

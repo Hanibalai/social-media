@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import ru.effectivemobile.socialmedia.exception.BadRequestException;
 import ru.effectivemobile.socialmedia.model.Post;
 import ru.effectivemobile.socialmedia.service.PostService;
 import ru.effectivemobile.socialmedia.service.UserService;
@@ -26,7 +27,7 @@ public class UserController {
         try {
             List<PostDto> userPosts = postService.getUserPosts(username);
             return ResponseEntity.ok(userPosts);
-        } catch (RuntimeException e) {
+        } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
@@ -36,7 +37,7 @@ public class UserController {
         try {
             PostDto createdPost = postService.savePost(username, post);
             return ResponseEntity.ok(createdPost);
-        } catch (RuntimeException e) {
+        } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
@@ -47,7 +48,7 @@ public class UserController {
         try {
             postService.deletePost(username, postId);
             return ResponseEntity.ok(new MessageResponse("Post was successfully deleted"));
-        } catch (RuntimeException e) {
+        } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
@@ -57,7 +58,7 @@ public class UserController {
         try {
             List<PostDto> visitedUserPosts = postService.getUserPosts(visitedUsername);
             return ResponseEntity.ok(visitedUserPosts);
-        } catch (RuntimeException e) {
+        } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
@@ -68,7 +69,8 @@ public class UserController {
         try {
             userService.inviteFriend(username, invitedUsername);
             return ResponseEntity.ok(new MessageResponse("Friend invitation was successfully sent"));
-        } catch (RuntimeException e) {
+        } catch (BadRequestException e) {
+            System.out.println(e.getMessage());
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
