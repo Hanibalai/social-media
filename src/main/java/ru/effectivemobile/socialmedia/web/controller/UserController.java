@@ -31,15 +31,19 @@ public class UserController {
 
     @GetMapping("/{username}")
     public ResponseEntity<?> myPage(@PathVariable("username") String username,
-                                    @RequestParam(value = "page", defaultValue = "0") @Min(0) int page,
-                                    @RequestParam(value = "size", defaultValue = "10") @Min(1) @Max(100) int size) {
+                                    @RequestParam(value = "page",
+                                            defaultValue = "0") @Min(0) int page,
+                                    @RequestParam(value = "size",
+                                            defaultValue = "10") @Min(1) @Max(100) int size) {
         return getPosts(username, page, size);
     }
 
     @GetMapping("/visit/{username}")
     public ResponseEntity<?> visitPage(@PathVariable("username") String visitedUsername,
-                                       @RequestParam(value = "page", defaultValue = "0") @Min(0) int page,
-                                       @RequestParam(value = "size", defaultValue = "10") @Min(1) @Max(100) int size) {
+                                       @RequestParam(value = "page",
+                                               defaultValue = "0") @Min(0) int page,
+                                       @RequestParam(value = "size",
+                                               defaultValue = "10") @Min(1) @Max(100) int size) {
         return getPosts(visitedUsername, page, size);
     }
 
@@ -72,6 +76,22 @@ public class UserController {
         try {
             postService.removePost(username, postId);
             return ResponseEntity.ok(new MessageResponse("Post was successfully removed"));
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new MessageResponse("Server error"));
+        }
+    }
+
+    @GetMapping("/{username}/activityfeed")
+    public ResponseEntity<?> activityFeed(@PathVariable String username,
+                                          @RequestParam(value = "page",
+                                                  defaultValue = "0") @Min(0) int page,
+                                          @RequestParam(value = "size",
+                                                  defaultValue = "10") @Min(1) @Max(100) int size) {
+        try {
+            List<PostDto> activityFeed = postService.getActivityFeed(username, page, size);
+            return ResponseEntity.ok(activityFeed);
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         } catch (Exception e) {
