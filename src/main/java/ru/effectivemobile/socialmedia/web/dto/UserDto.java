@@ -12,9 +12,9 @@ public class UserDto implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private long id;
-    private String username;
-    private String email;
+    private final long id;
+    private final String username;
+    private final String email;
 
     public UserDto(long id, String username, String email) {
         this.id = id;

@@ -11,11 +11,13 @@ public class PostDto implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private long id;
-    private String username;
-    private String header;
-    private String text;
-    private byte[] image;
+    private final long id;
+    private final String username;
+    private final String header;
+    private final String text;
+    private final byte[] image;
+
+
 
     private PostDto(long id, String username, String header, String text, byte[] image) {
         this.id = id;

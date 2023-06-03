@@ -11,9 +11,9 @@ public class MessageDto implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private String sender;
-    private String recipient;
-    private String text;
+    private final String sender;
+    private final String recipient;
+    private final String text;
 
     private MessageDto(String sender, String recipient, String text) {
         this.sender = sender;
