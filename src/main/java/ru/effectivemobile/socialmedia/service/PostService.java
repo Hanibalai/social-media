@@ -2,6 +2,7 @@ package ru.effectivemobile.socialmedia.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.effectivemobile.socialmedia.exception.BadRequestException;
@@ -35,9 +36,9 @@ public class PostService {
         if (user == null) {
             throw new BadRequestException("Failed to get user's activity feed: Invalid username");
         }
-        List<Post> postList = postRepository.findAllByUser_SubscribesOrderByCreationTimeDesc(
-                user.getSubscribes(), PageRequest.of(page, size)
-        );
+        List<Post> postList = postRepository.findAllByUserIn(
+                user.getSubscribes(),
+                PageRequest.of(page, size, Sort.by("creationTime").descending()));
         return postList.stream().map(PostDto::build).collect(Collectors.toList());
     }
 
