@@ -14,11 +14,11 @@ public class Message {
     @Column(name = "text")
     private String text;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne
     @JoinColumn(name = "sender")
     private User sender;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne
     @JoinColumn(name = "recipient")
     private User recipient;
 }
