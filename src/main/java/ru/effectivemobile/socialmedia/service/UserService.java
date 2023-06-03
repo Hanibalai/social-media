@@ -68,7 +68,7 @@ public class UserService {
     public void removeFriend(String username, String friendUsername) {
         User user = userRepository.findByUsername(username).orElse(null);
         if (user == null) {
-            throw new BadRequestException("Failed to remove user from friends: Invalid username");
+            throw new BadRequestException("Failed to remove friend: Invalid username");
         }
         User friend = userRepository.findByUsername(friendUsername).orElse(null);
         if (friend == null || friend.equals(user) || !user.getFriends().contains(friend)) {
