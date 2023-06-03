@@ -1,7 +1,6 @@
 package ru.effectivemobile.socialmedia.service;
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.effectivemobile.socialmedia.exception.BadRequestException;
@@ -12,6 +11,9 @@ import ru.effectivemobile.socialmedia.repository.MessageRepository;
 import ru.effectivemobile.socialmedia.repository.UserRepository;
 import ru.effectivemobile.socialmedia.web.dto.MessageDto;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Transactional
 @AllArgsConstructor
@@ -19,8 +21,7 @@ public class MessageService {
     private UserRepository userRepository;
     private MessageRepository messageRepository;
 
-    @Transactional
-    public void sendMessage(String senderUsername, String recipientUsername, MessageDto messageDto) {
+    public MessageDto sendMessage(String senderUsername, String recipientUsername, Message message) {
         User sender = userRepository.findByUsername(senderUsername).orElse(null);
         if (sender == null) {
             throw new BadRequestException("Failed to send message: Invalid sender username");
@@ -29,15 +30,33 @@ public class MessageService {
         if (recipient == null) {
             throw new BadRequestException("Failed to send message: Invalid recipient username");
         }
-        System.out.println(messageDto.getText());
+        System.out.println(message.getText());
         if (!sender.getFriends().contains(recipient)) {
             throw new MessageErrorException("Failed to send message: Users are not friends");
         }
-        System.out.println(messageDto.getText());
-        Message message = new Message();
-        message.setText(messageDto.getText());
+        System.out.println(message.getText());
         message.setSender(sender);
         message.setRecipient(recipient);
         messageRepository.save(message);
+        return MessageDto.build(message);
     }
+
+    public List<MessageDto> getSentMessages(String username) {
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user == null) {
+            throw new BadRequestException("Failed to get list of messages: Invalid username");
+        }
+        List<Message> messageList = messageRepository.getMessagesBySenderOrderByIdDesc(user);
+        return messageList.stream().map(MessageDto::build).collect(Collectors.toList());
+    }
+
+    public List<MessageDto> getReceivedMessages(String username) {
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user == null) {
+            throw new BadRequestException("Failed to get list of messages: Invalid username");
+        }
+        List<Message> messageList = messageRepository.getMessagesByRecipientOrderByIdDesc(user);
+        return messageList.stream().map(MessageDto::build).collect(Collectors.toList());
+    }
+
 }
