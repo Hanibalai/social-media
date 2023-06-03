@@ -2,7 +2,6 @@ package ru.effectivemobile.socialmedia.web.dto;
 
 import lombok.Getter;
 import ru.effectivemobile.socialmedia.model.Post;
-import ru.effectivemobile.socialmedia.model.User;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -26,9 +25,9 @@ public class PostDto implements Serializable {
         this.image = image;
     }
 
-    public static PostDto build(Post post, User user) {
+    public static PostDto build(Post post) {
         return new PostDto(post.getId(),
-                user.getUsername(),
+                post.getUser().getUsername(),
                 post.getHeader(),
                 post.getText(),
                 post.getImage());
