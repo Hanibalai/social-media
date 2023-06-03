@@ -6,8 +6,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.effectivemobile.socialmedia.exception.BadRequestException;
 import ru.effectivemobile.socialmedia.model.Post;
+import ru.effectivemobile.socialmedia.service.MessageService;
 import ru.effectivemobile.socialmedia.service.PostService;
 import ru.effectivemobile.socialmedia.service.UserService;
+import ru.effectivemobile.socialmedia.web.dto.MessageDto;
 import ru.effectivemobile.socialmedia.web.dto.PostDto;
 import ru.effectivemobile.socialmedia.web.dto.UserDto;
 import ru.effectivemobile.socialmedia.web.dto.response.MessageResponse;
@@ -22,6 +24,7 @@ import java.util.List;
 public class UserController {
     private UserService userService;
     private PostService postService;
+    private MessageService messageService;
 
     @GetMapping("/{username}")
     public ResponseEntity<?> myPage(@PathVariable("username") String username) {
@@ -116,6 +119,22 @@ public class UserController {
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new MessageResponse("Server error"));
+        }
+    }
+
+    @PostMapping("/{sender}/friends/{recipient}/sendmessage")
+    private ResponseEntity<?> sendMessage(@PathVariable String sender,
+                                          @PathVariable String recipient,
+                                          @RequestBody MessageDto messageDto) {
+        try {
+            messageService.sendMessage(sender, recipient, messageDto);
+            return ResponseEntity.ok("Message was successfully sent");
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
             return ResponseEntity.internalServerError().body(new MessageResponse("Server error"));
         }
     }
