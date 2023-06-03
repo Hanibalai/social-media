@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findAllByUserOrderByIdDesc(User user, PageRequest pageRequest);
 
-    List<Post> findAllByUser_SubscribesOrderByCreationTimeDesc(List<User> subscribes, PageRequest pageRequest);
+    List<Post> findAllByUserIn(List<User> subscribes, PageRequest pageRequest);
 
     Optional<Post> getPostById(long id);
 }
