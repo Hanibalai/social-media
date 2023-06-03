@@ -9,4 +9,6 @@ import java.util.List;
 
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
+    List<Message> getMessagesBySenderOrderByIdDesc(User sender);
+    List<Message> getMessagesByRecipientOrderByIdDesc(User recipient);
 }
