@@ -1,5 +1,7 @@
 package ru.effectivemobile.socialmedia.web.controller;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,18 +30,22 @@ public class UserController {
     private MessageService messageService;
 
     @GetMapping("/{username}")
-    public ResponseEntity<?> myPage(@PathVariable("username") String username) {
-        return getPosts(username);
+    public ResponseEntity<?> myPage(@PathVariable("username") String username,
+                                    @RequestParam(value = "page", defaultValue = "0") @Min(0) int page,
+                                    @RequestParam(value = "size", defaultValue = "10") @Min(1) @Max(100) int size) {
+        return getPosts(username, page, size);
     }
 
     @GetMapping("/visit/{username}")
-    public ResponseEntity<?> visitPage(@PathVariable("username") String visitedUsername) {
-        return getPosts(visitedUsername);
+    public ResponseEntity<?> visitPage(@PathVariable("username") String visitedUsername,
+                                       @RequestParam(value = "page", defaultValue = "0") @Min(0) int page,
+                                       @RequestParam(value = "size", defaultValue = "10") @Min(1) @Max(100) int size) {
+        return getPosts(visitedUsername, page, size);
     }
 
-    private ResponseEntity<?> getPosts(String username) {
+    private ResponseEntity<?> getPosts(String username, int page, int size) {
         try {
-            List<PostDto> userPosts = postService.getUserPosts(username);
+            List<PostDto> userPosts = postService.getUserPosts(username, page, size);
             return ResponseEntity.ok(userPosts);
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
@@ -86,7 +92,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{recipient}/invitations/{sender}/accept")
+    @GetMapping("/{recipient}/{sender}/accept")
     public ResponseEntity<?> acceptInvite(@PathVariable String recipient,
                                           @PathVariable String sender) {
         try {

@@ -1,6 +1,7 @@
 package ru.effectivemobile.socialmedia.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.effectivemobile.socialmedia.exception.BadRequestException;
@@ -20,12 +21,12 @@ public class PostService {
     private PostRepository postRepository;
     private UserRepository userRepository;
 
-    public List<PostDto> getUserPosts(String username) {
+    public List<PostDto> getUserPosts(String username, int page, int size) {
         User user = userRepository.findByUsername(username).orElse(null);
         if (user == null) {
             throw new BadRequestException("Failed to get the list of user's posts: Invalid username");
         }
-        List<Post> postList = postRepository.findPostsByUserOrderById(user);
+        List<Post> postList = postRepository.findAllByUserOrderByIdDesc(user, PageRequest.of(page, size));
         return postList.stream().map(PostDto::build).collect(Collectors.toList());
     }
 
