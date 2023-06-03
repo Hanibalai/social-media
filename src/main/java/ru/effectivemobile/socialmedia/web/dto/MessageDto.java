@@ -1,8 +1,7 @@
 package ru.effectivemobile.socialmedia.web.dto;
 
 import lombok.Getter;
-import ru.effectivemobile.socialmedia.model.Post;
-import ru.effectivemobile.socialmedia.model.User;
+import ru.effectivemobile.socialmedia.model.Message;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -22,7 +21,10 @@ public class MessageDto implements Serializable {
         this.text = text;
     }
 
-    public static MessageDto build(String sender, String recipient, String text) {
-        return new MessageDto(sender, recipient, text);
+    public static MessageDto build(Message message) {
+        return new MessageDto(
+                message.getSender().getUsername(),
+                message.getRecipient().getUsername(),
+                message.getText());
     }
 }
