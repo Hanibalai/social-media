@@ -5,6 +5,7 @@ import ru.effectivemobile.socialmedia.model.Post;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Date;
 
 @Getter
 public class PostDto implements Serializable {
@@ -16,15 +17,17 @@ public class PostDto implements Serializable {
     private final String header;
     private final String text;
     private final byte[] image;
+    private final Date creationTime;
 
 
 
-    private PostDto(long id, String username, String header, String text, byte[] image) {
+    private PostDto(long id, String username, String header, String text, byte[] image, Date creationTime) {
         this.id = id;
         this.username = username;
         this.header = header;
         this.text = text;
         this.image = image;
+        this.creationTime = creationTime;
     }
 
     public static PostDto build(Post post) {
@@ -32,6 +35,7 @@ public class PostDto implements Serializable {
                 post.getUser().getUsername(),
                 post.getHeader(),
                 post.getText(),
-                post.getImage());
+                post.getImage(),
+                post.getCreationTime());
     }
 }
