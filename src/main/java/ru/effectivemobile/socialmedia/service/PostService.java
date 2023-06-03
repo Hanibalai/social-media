@@ -26,7 +26,7 @@ public class PostService {
             throw new BadRequestException("Failed to get the list of user's posts: Invalid username");
         }
         List<Post> postList = postRepository.findPostsByUserOrderById(user);
-        return postList.stream().map(post -> PostDto.build(post, user)).collect(Collectors.toList());
+        return postList.stream().map(PostDto::build).collect(Collectors.toList());
     }
 
     public PostDto savePost(String username, Post post) {
@@ -36,7 +36,7 @@ public class PostService {
         }
         post.setUser(user);
         Post createdPost = postRepository.save(post);
-        return PostDto.build(createdPost, user);
+        return PostDto.build(createdPost);
     }
 
     public void removePost(String username, long postId) {
