@@ -46,20 +46,24 @@ public class UserService {
         invitationRepository.save(invitation);
     }
 
-    public void acceptInvite(String recipientUsername, long invitationId) {
+    public void acceptInvite(String recipientUsername, String senderUsername) {
         User recipient = userRepository.findByUsername(recipientUsername).orElse(null);
         if (recipient == null) {
             throw new BadRequestException("Failed to accept friend invite: Invalid recipient username");
         }
-        Invitation invitation = invitationRepository.getInvitationById(invitationId).orElse(null);
-        if (invitation == null || !recipient.getInvitations().contains(invitation)) {
+        User sender = userRepository.findByUsername(senderUsername).orElse(null);
+        if (sender == null) {
+            throw new BadRequestException("Failed to accept friend invite: Invalid sender username");
+        }
+        Invitation invitation = invitationRepository.
+                getInvitationByRecipientAndSender(recipient, sender).orElse(null);
+        if (invitation == null) {
             throw new InvitationErrorException("Failed to accept friend invite: The invitation does not exist");
         }
-        User sender = invitation.getSender();
-        sender.getSubscribers().add(recipient);
-        sender.getFriends().add(recipient);
-        recipient.getFriends().add(sender);
         recipient.getSubscribes().add(sender);
+        recipient.getFriends().add(sender);
+        sender.getFriends().add(recipient);
+        sender.getSubscribers().add(recipient);
         userRepository.save(recipient);
         userRepository.save(sender);
         invitationRepository.delete(invitation);

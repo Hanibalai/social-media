@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.effectivemobile.socialmedia.exception.BadRequestException;
+import ru.effectivemobile.socialmedia.model.Message;
 import ru.effectivemobile.socialmedia.model.Post;
 import ru.effectivemobile.socialmedia.service.MessageService;
 import ru.effectivemobile.socialmedia.service.PostService;
@@ -85,12 +86,25 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{username}/invitations/{invitationId}/accept")
-    public ResponseEntity<?> acceptInvite(@PathVariable String username,
-                                    @PathVariable long invitationId) {
+    @GetMapping("/{recipient}/invitations/{sender}/accept")
+    public ResponseEntity<?> acceptInvite(@PathVariable String recipient,
+                                          @PathVariable String sender) {
         try {
-            userService.acceptInvite(username, invitationId);
+            userService.acceptInvite(recipient, sender);
             return ResponseEntity.ok(new MessageResponse("Friend invitation was successfully accepted"));
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.internalServerError().body(new MessageResponse("Server error"));
+        }
+    }
+
+    @GetMapping("/{username}/friends")
+    public ResponseEntity<?> getFriends(@PathVariable String username) {
+        try {
+            List <UserDto> userFriends = userService.getUserFriends(username);
+            return ResponseEntity.ok(userFriends);
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         } catch (Exception e) {
@@ -111,11 +125,26 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{username}/friends")
-    public ResponseEntity<?> getFriends(@PathVariable String username) {
+    @PostMapping("/{sender}/friends/{recipient}/sendmessage")
+    public ResponseEntity<?> sendMessage(@PathVariable String sender,
+                                         @PathVariable String recipient,
+                                         @RequestBody Message message) {
         try {
-            List <UserDto> userFriends = userService.getUserFriends(username);
-            return ResponseEntity.ok(userFriends);
+            MessageDto sentMessage = messageService.sendMessage(sender, recipient, message);
+            return ResponseEntity.ok(sentMessage);
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.internalServerError().body(new MessageResponse("Server error"));
+        }
+    }
+
+    @GetMapping("/{username}/messages/sent")
+    public ResponseEntity<?> getSentMessages(@PathVariable String username) {
+        try {
+            List<MessageDto> sentMessages = messageService.getSentMessages(username);
+            return ResponseEntity.ok(sentMessages);
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         } catch (Exception e) {
@@ -123,18 +152,14 @@ public class UserController {
         }
     }
 
-    @PostMapping("/{sender}/friends/{recipient}/sendmessage")
-    private ResponseEntity<?> sendMessage(@PathVariable String sender,
-                                          @PathVariable String recipient,
-                                          @RequestBody MessageDto messageDto) {
+    @GetMapping("/{username}/messages/received")
+    public ResponseEntity<?> getReceivedMessages(@PathVariable String username) {
         try {
-            messageService.sendMessage(sender, recipient, messageDto);
-            return ResponseEntity.ok("Message was successfully sent");
+            List<MessageDto> sentMessages = messageService.getReceivedMessages(username);
+            return ResponseEntity.ok(sentMessages);
         } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println(e.getMessage());
             return ResponseEntity.internalServerError().body(new MessageResponse("Server error"));
         }
     }
