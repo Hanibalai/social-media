@@ -30,6 +30,17 @@ public class PostService {
         return postList.stream().map(PostDto::build).collect(Collectors.toList());
     }
 
+    public List<PostDto> getActivityFeed(String username, int page, int size) {
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user == null) {
+            throw new BadRequestException("Failed to get user's activity feed: Invalid username");
+        }
+        List<Post> postList = postRepository.findAllByUser_SubscribesOrderByCreationTimeDesc(
+                user.getSubscribes(), PageRequest.of(page, size)
+        );
+        return postList.stream().map(PostDto::build).collect(Collectors.toList());
+    }
+
     public PostDto savePost(String username, Post post) {
         User user = userRepository.findByUsername(username).orElse(null);
         if (user == null) {
