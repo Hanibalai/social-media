@@ -1,5 +1,6 @@
 package ru.effectivemobile.socialmedia.repository;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import ru.effectivemobile.socialmedia.model.Post;
@@ -11,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    List<Post> findPostsByUserOrderById(User user);
+    List<Post> findAllByUserOrderByIdDesc(User user, PageRequest pageRequest);
 
     Optional<Post> getPostById(long id);
 }
