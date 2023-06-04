@@ -45,10 +45,10 @@ public class User {
     private List<User> subscribers;
 
     @ManyToMany
-    @JoinTable(name = "user_subscribe",
+    @JoinTable(name = "user_subscription",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "subscribe_id"))
-    private List<User> subscribes;
+            inverseJoinColumns = @JoinColumn(name = "subscription_id"))
+    private List<User> subscriptions;
 
     @ManyToMany
     @JoinTable(name = "user_friend",

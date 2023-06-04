@@ -39,8 +39,8 @@ public class UserService {
         if (invitationRepository.existsBySenderAndRecipient(sender, recipient)) {
             throw new InvitationErrorException("Failed to invite: The invitation has already been sent before");
         }
-        if (!sender.getSubscribes().contains(recipient)) {
-            sender.getSubscribes().add(recipient);
+        if (!sender.getSubscriptions().contains(recipient)) {
+            sender.getSubscriptions().add(recipient);
             recipient.getSubscribers().add(sender);
         }
         invitationRepository.save(invitation);
@@ -60,7 +60,7 @@ public class UserService {
         if (invitation == null) {
             throw new InvitationErrorException("Failed to accept friend invite: The invitation does not exist");
         }
-        recipient.getSubscribes().add(sender);
+        recipient.getSubscriptions().add(sender);
         recipient.getFriends().add(sender);
         sender.getFriends().add(recipient);
         sender.getSubscribers().add(recipient);
@@ -79,7 +79,7 @@ public class UserService {
             throw new BadRequestException("Failed to remove friend: Friend with this username does not exist");
         }
         user.getFriends().remove(friend);
-        user.getSubscribes().remove(friend);
+        user.getSubscriptions().remove(friend);
         friend.getFriends().remove(user);
         friend.getSubscribers().remove(user);
         userRepository.save(friend);
