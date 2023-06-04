@@ -1,5 +1,6 @@
 package ru.effectivemobile.socialmedia.web.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import ru.effectivemobile.socialmedia.model.Message;
 
@@ -7,6 +8,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 @Getter
+@Schema(description = "Message entity")
 public class MessageDto implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

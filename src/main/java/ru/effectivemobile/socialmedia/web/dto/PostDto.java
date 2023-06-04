@@ -1,5 +1,6 @@
 package ru.effectivemobile.socialmedia.web.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import ru.effectivemobile.socialmedia.model.Post;
 
@@ -8,10 +9,12 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Getter
+@Schema(description = "Post entity")
 public class PostDto implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private final long id;
     private final String username;
     private final String header;
