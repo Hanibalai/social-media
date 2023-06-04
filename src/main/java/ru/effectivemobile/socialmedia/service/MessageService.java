@@ -21,7 +21,7 @@ public class MessageService {
     private UserRepository userRepository;
     private MessageRepository messageRepository;
 
-    public MessageDto sendMessage(String senderUsername, String recipientUsername, Message message) {
+    public MessageDto sendMessage(String senderUsername, String recipientUsername, MessageDto messageDto) {
         User sender = userRepository.findByUsername(senderUsername).orElse(null);
         if (sender == null) {
             throw new BadRequestException("Failed to send message: Invalid sender username");
@@ -30,13 +30,13 @@ public class MessageService {
         if (recipient == null) {
             throw new BadRequestException("Failed to send message: Invalid recipient username");
         }
-        System.out.println(message.getText());
         if (!sender.getFriends().contains(recipient)) {
             throw new MessageErrorException("Failed to send message: Users are not friends");
         }
-        System.out.println(message.getText());
+        Message message = new Message();
         message.setSender(sender);
         message.setRecipient(recipient);
+        message.setText(messageDto.getText());
         messageRepository.save(message);
         return MessageDto.build(message);
     }
