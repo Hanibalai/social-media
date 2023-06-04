@@ -2,6 +2,7 @@ package ru.effectivemobile.socialmedia.web.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -24,6 +25,7 @@ import java.util.List;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @AllArgsConstructor
 @Tag(name = "User action controller", description = "Performs all user actions after login")
+@SecurityRequirement(name = "JWT")
 public class UserController {
     private UserService userService;
     private PostService postService;
