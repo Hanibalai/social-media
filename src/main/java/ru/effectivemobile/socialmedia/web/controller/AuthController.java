@@ -45,7 +45,11 @@ public class AuthController {
     @PostMapping("/signin")
     @Operation(
             summary = "User authorization",
-            description = "Allows the user to login"
+            description = "Allows the user to login. " +
+                    "It accepts as input a LoginRequest object with two fields in the String format: " +
+                    "Username and password. " +
+                    "Returns a JwtResponse object containing the JWT token in string format " +
+                    "and the data of an authorized user"
     )
     public ResponseEntity<?> authUser(@RequestBody @Valid LoginRequest loginRequest) {
 
@@ -81,7 +85,10 @@ public class AuthController {
     @PostMapping("/signup")
     @Operation(
             summary = "User registration",
-            description = "Allows the user to register"
+            description = "Allows the user to register. " +
+                    "It accepts as input an object of the SignupRequest class containing four fields " +
+                    "in String format: Username, Email, List of user roles and Password. " +
+                    "Performs validation and returns result in String format nested in MessageResponse object"
     )
     public ResponseEntity<?> registerUser(@RequestBody SignupRequest signupRequest) {
 

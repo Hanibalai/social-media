@@ -33,8 +33,10 @@ public class UserController {
 
     @GetMapping("/{username}")
     @Operation(
-            summary = "User posts",
-            description = "Shows all user posts with pagination settings"
+            summary = "Shows the list of user posts",
+            description = "Takes the username from path as input. " +
+                    "It can also accept page pagination parameters: " +
+                    "the number of pages and the number of posts per page. Returns a list of all user posts"
     )
     public ResponseEntity<?> getUserPosts(
             @PathVariable("username") String username,
@@ -55,8 +57,11 @@ public class UserController {
 
     @PostMapping("/{username}/posts/save")
     @Operation(
-            summary = "Saving a post",
-            description = "Allows the user to add and save a new post")
+            summary = "Adds and saves a new post",
+            description = "Takes as input a username from the path  " +
+                    "and a PostDTO object in JSON format from the request body. " +
+                    "Converts an object and saves it to the database. Returns the saved object as a response."
+    )
     public ResponseEntity<?> savePost(@PathVariable("username") String username,
                                       @RequestBody PostDto post) {
 
@@ -72,8 +77,11 @@ public class UserController {
 
     @DeleteMapping("/{username}/posts/{id}/remove")
     @Operation(
-            summary = "Removing a post",
-            description = "Allows the user to remove his post by ID number")
+            summary = "Removes a user's post by ID",
+            description = "Takes the username and post ID from the path as input. " +
+                    "Validates the data and removes the post from the database. " +
+                    "Returns the response in String format."
+    )
     public ResponseEntity<?> removePost(
             @PathVariable("username") String username,
             @Parameter(description = "Post ID number") @PathVariable("id") long postId) {
@@ -90,8 +98,12 @@ public class UserController {
 
     @GetMapping("/{username}/activityfeed")
     @Operation(
-            summary = "User activity feed",
-            description = "Shows all subscription posts with pagination settings and sorted by newest")
+            summary = "Shows a list of all posts in the user's subscriptions",
+            description = "Takes the username from path as input. " +
+                    "It can also accept page pagination parameters: " +
+                    "the number of pages and the number of posts per page. " +
+                    "Returns a list of posts sorted by newest and with pagination settings applied"
+    )
     public ResponseEntity<?> activityFeed(
             @PathVariable String username,
             @Parameter(description = "Number of displayed pages") @RequestParam(value = "page",
@@ -111,8 +123,12 @@ public class UserController {
 
     @GetMapping("/{sender}/{recipient}/invite")
     @Operation(
-            summary = "Sending a friend invitation",
-            description = "Allows the user to invite a new friend")
+            summary = "Sends a friend invite",
+            description = "Takes two parameters from the path as input: " +
+                    "the usernames of the sender and recipient of the invitation. " +
+                    "Saves the invitation to the database, subscribes the sender to the recipient. " +
+                    "Returns the response in String format."
+    )
     public ResponseEntity<?> invite(
             @Parameter(description = "Invitation sender") @PathVariable String sender,
             @Parameter(description = "Recipient of the invitation") @PathVariable String recipient) {
@@ -128,8 +144,12 @@ public class UserController {
 
     @GetMapping("/{recipient}/{sender}/accept")
     @Operation(
-            summary = "Friend invitation accepting",
-            description = "Allows the user to accept a friend invite from another user")
+            summary = "Accepts a friend invite",
+            description = "Takes two parameters from the path as input: " +
+                    "the usernames of the sender and recipient of the invitation. " +
+                    "Subscribes the recipient to the sender, saves both users as friends. " +
+                    "Removes the invitation from the database. Returns the response in String format."
+    )
     public ResponseEntity<?> acceptInvite(
             @Parameter(description = "Recipient of the invitation") @PathVariable String recipient,
             @Parameter(description = "Invitation sender") @PathVariable String sender) {
@@ -146,8 +166,10 @@ public class UserController {
 
     @GetMapping("/{username}/friends")
     @Operation(
-            summary = "User friends list",
-            description = "Shows a list of all user friends")
+            summary = "Shows the user's friends list",
+            description = "Takes the username from the path as input. " +
+                    "Validates data. Returns a list of all user's friends"
+    )
     public ResponseEntity<?> getFriends(@PathVariable String username) {
         try {
             List <UserDto> userFriends = userService.getUserFriends(username);
@@ -161,8 +183,12 @@ public class UserController {
 
     @DeleteMapping("/{username}/friends/{friendUsername}/remove")
     @Operation(
-            summary = "Removing user from friends",
-            description = "Allows the user to remove a friend")
+            summary = "Removes user from friends",
+            description = "Takes two parameters as input: " +
+                    "the username and the name of the user-friend to remove. " +
+                    "Unsubscribes a user from a deleted friend, removes a friend. " +
+                    "Returns the response in String format."
+    )
     public ResponseEntity<?> removeFriend(@PathVariable String username,
                                           @PathVariable String friendUsername) {
         try {
@@ -177,8 +203,12 @@ public class UserController {
 
     @PostMapping("/{sender}/friends/{recipient}/sendmessage")
     @Operation(
-            summary = "Sending a message",
-            description = "Allows the user to send a message to his friend")
+            summary = "Sends a message",
+            description = "Takes two parameters from the path as input: " +
+                    "the usernames of the sender and recipient of a message. " +
+                    "Receives a MessageDto object in JSON format from the request body. " +
+                    "Saves the message to the database. Returns the stored message as a response."
+    )
     public ResponseEntity<?> sendMessage(
             @Parameter(description = "Message sender") @PathVariable String sender,
             @Parameter(description = "Message recipient") @PathVariable String recipient,
@@ -196,8 +226,10 @@ public class UserController {
 
     @GetMapping("/{username}/messages/sent")
     @Operation(
-            summary = "User sent messages",
-            description = "Shows a list of messages sent by the user")
+            summary = "Shows a list of messages sent by the user",
+            description = "Takes the username from the path as input. " +
+                    "Takes all messages sent by user from the database and returns them as a list."
+    )
     public ResponseEntity<?> getSentMessages(@PathVariable String username) {
         try {
             List<MessageDto> sentMessages = messageService.getSentMessages(username);
@@ -211,8 +243,9 @@ public class UserController {
 
     @GetMapping("/{username}/messages/received")
     @Operation(
-            summary = "User received messages",
-            description = "Shows a list of messages received by the user")
+            summary = "Shows a list of messages received by the user",
+            description = "Takes the username from the path as input. " +
+                    "Takes all messages received by user from the database and returns them as a list.")
     public ResponseEntity<?> getReceivedMessages(@PathVariable String username) {
         try {
             List<MessageDto> sentMessages = messageService.getReceivedMessages(username);
