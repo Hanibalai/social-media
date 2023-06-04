@@ -2,26 +2,28 @@ package ru.effectivemobile.socialmedia.web.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import ru.effectivemobile.socialmedia.security.jwt.JwtUtils;
-import ru.effectivemobile.socialmedia.web.dto.response.JwtResponse;
-import ru.effectivemobile.socialmedia.web.dto.request.LoginRequest;
-import ru.effectivemobile.socialmedia.web.dto.response.MessageResponse;
-import ru.effectivemobile.socialmedia.web.dto.request.SignupRequest;
 import ru.effectivemobile.socialmedia.model.ERole;
 import ru.effectivemobile.socialmedia.model.Role;
 import ru.effectivemobile.socialmedia.model.User;
 import ru.effectivemobile.socialmedia.repository.RoleRepository;
 import ru.effectivemobile.socialmedia.repository.UserRepository;
 import ru.effectivemobile.socialmedia.security.UserDetailsImpl;
+import ru.effectivemobile.socialmedia.security.jwt.JwtUtils;
+import ru.effectivemobile.socialmedia.web.dto.request.LoginRequest;
+import ru.effectivemobile.socialmedia.web.dto.request.SignupRequest;
+import ru.effectivemobile.socialmedia.web.dto.response.JwtResponse;
+import ru.effectivemobile.socialmedia.web.dto.response.MessageResponse;
 
 import java.util.HashSet;
 import java.util.List;
@@ -45,20 +47,29 @@ public class AuthController {
             summary = "User authorization",
             description = "Allows the user to login"
     )
-    public ResponseEntity<?> authUser(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authUser(@RequestBody @Valid LoginRequest loginRequest) {
 
-        Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsername(),
-                        loginRequest.getPassword()));
+        String jwt;
+        UserDetailsImpl userDetails;
+        List<String> roles;
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
+        try {
+            Authentication authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(
+                            loginRequest.getUsername(),
+                            loginRequest.getPassword()));
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            jwt = jwtUtils.generateJwtToken(authentication);
+
+            userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            roles = userDetails.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.toList());
+        } catch (AuthenticationException e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        }
 
         return ResponseEntity.ok(new JwtResponse(jwt,
                 userDetails.getId(),
@@ -95,7 +106,7 @@ public class AuthController {
             user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
 
         Set<String> requestRoles = signupRequest.getRoles();
