@@ -37,19 +37,23 @@ public class PostService {
             throw new BadRequestException("Failed to get user's activity feed: Invalid username");
         }
         List<Post> postList = postRepository.findAllByUserIn(
-                user.getSubscribes(),
+                user.getSubscriptions(),
                 PageRequest.of(page, size, Sort.by("creationTime").descending()));
         return postList.stream().map(PostDto::build).collect(Collectors.toList());
     }
 
-    public PostDto savePost(String username, Post post) {
+    public PostDto savePost(String username, PostDto postDto) {
         User user = userRepository.findByUsername(username).orElse(null);
         if (user == null) {
             throw new BadRequestException("Failed to save the post: Invalid username");
         }
+        Post post = new Post();
         post.setUser(user);
-        Post createdPost = postRepository.save(post);
-        return PostDto.build(createdPost);
+        post.setHeader(postDto.getHeader());
+        post.setText(postDto.getText());
+        post.setImage(postDto.getImage());
+        postRepository.save(post);
+        return PostDto.build(post);
     }
 
     public void removePost(String username, long postId) {
