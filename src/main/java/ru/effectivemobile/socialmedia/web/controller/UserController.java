@@ -42,7 +42,7 @@ public class UserController {
             @PathVariable("username") String username,
             @Parameter(description = "Number of displayed pages") @RequestParam(value = "page",
                     defaultValue = "0") @Min(0) int page,
-            @Parameter(description = "Number of displayed pages") @RequestParam(value = "size",
+            @Parameter(description = "Number of displayed posts per page") @RequestParam(value = "size",
                     defaultValue = "10") @Min(1) @Max(100) int size) {
 
         try {
@@ -108,7 +108,7 @@ public class UserController {
             @PathVariable String username,
             @Parameter(description = "Number of displayed pages") @RequestParam(value = "page",
                     defaultValue = "0") @Min(0) int page,
-            @Parameter(description = "Number of displayed pages") @RequestParam(value = "size",
+            @Parameter(description = "Number of displayed posts per page") @RequestParam(value = "size",
                     defaultValue = "10") @Min(1) @Max(100) int size) {
 
         try {
