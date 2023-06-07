@@ -31,10 +31,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("api/auth")
 @CrossOrigin(origins = "*", maxAge = 3600)
-@AllArgsConstructor
-@Tag(name = "Authentication controller", description = "Registration and authorization")
+@Tag(name = "Authentication Controller", description = "Registration and authorization")
 public class AuthController {
     private AuthenticationManager authenticationManager;
     private UserRepository userRepository;
