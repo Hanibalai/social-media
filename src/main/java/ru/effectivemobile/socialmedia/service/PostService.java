@@ -6,6 +6,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.effectivemobile.socialmedia.exception.BadRequestException;
+import ru.effectivemobile.socialmedia.exception.PostErrorException;
 import ru.effectivemobile.socialmedia.model.Post;
 import ru.effectivemobile.socialmedia.model.User;
 import ru.effectivemobile.socialmedia.repository.PostRepository;
@@ -64,6 +65,9 @@ public class PostService {
         User user = userRepository.findByUsername(username).orElse(null);
         if (user == null) {
             throw new BadRequestException("Failed to remove the post: Invalid username");
+        }
+        if (!post.getUser().equals(user)) {
+            throw new PostErrorException("Failed to remove the post: The post does not belong to the user");
         }
         postRepository.delete(post);
     }
