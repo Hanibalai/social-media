@@ -13,7 +13,9 @@ public class MessageDto implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private final String sender;
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private final String recipient;
     private final String text;
 

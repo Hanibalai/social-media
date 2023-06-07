@@ -16,6 +16,7 @@ public class PostDto implements Serializable {
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private final long id;
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private final String username;
     private final String header;
     private final String text;
