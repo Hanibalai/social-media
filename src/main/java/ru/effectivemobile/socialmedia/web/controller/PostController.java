@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.effectivemobile.socialmedia.exception.BadRequestException;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
+@Slf4j
 @RequestMapping("/api/posts")
 @SecurityRequirement(name = "JWT")
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -42,13 +44,16 @@ public class PostController {
                     defaultValue = "0") @Min(0) int page,
             @Parameter(description = "Number of displayed posts per page") @RequestParam(value = "size",
                     defaultValue = "10") @Min(1) @Max(100) int size) {
-
+        log.info("New request to get list of user's posts: {}", username);
         try {
             List<PostDto> userPosts = postService.getUserPosts(username, page, size);
+            log.info("List of posts received successfully");
             return ResponseEntity.ok(userPosts);
         } catch (BadRequestException e) {
+            log.warn(e.getMessage());
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.internalServerError().body(new MessageResponse("Server error"));
         }
     }
@@ -61,13 +66,16 @@ public class PostController {
     )
     public ResponseEntity<?> savePost(@PathVariable("username") String username,
                                       @RequestBody PostDto post) {
-
+        log.info("New request from user: {} to save a new post", username);
         try {
             PostDto createdPost = postService.savePost(username, post);
+            log.info("Post successfully saved");
             return ResponseEntity.ok(createdPost);
         } catch (BadRequestException e) {
+            log.warn(e.getMessage());
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.internalServerError().body(new MessageResponse("Server error"));
         }
     }
@@ -82,13 +90,16 @@ public class PostController {
     public ResponseEntity<?> removePost(
             @PathVariable("username") String username,
             @Parameter(description = "Post ID number") @PathVariable("id") long postId) {
-
+        log.info("New request from user: {} to remove a post, post ID: {}", username, postId);
         try {
             postService.removePost(username, postId);
+            log.info("Post successfully removed");
             return ResponseEntity.ok(new MessageResponse("Post was successfully removed"));
         } catch (BadRequestException e) {
+            log.warn(e.getMessage());
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.internalServerError().body(new MessageResponse("Server error"));
         }
     }
@@ -107,13 +118,16 @@ public class PostController {
                     defaultValue = "0") @Min(0) int page,
             @Parameter(description = "Number of displayed posts per page") @RequestParam(value = "size",
                     defaultValue = "10") @Min(1) @Max(100) int size) {
-
+        log.info("New request from user: {} to get his activity feed", username);
         try {
             List<PostDto> activityFeed = postService.getActivityFeed(username, page, size);
+            log.info("Activity feed received successfully");
             return ResponseEntity.ok(activityFeed);
         } catch (BadRequestException e) {
+            log.warn(e.getMessage());
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.internalServerError().body(new MessageResponse("Server error"));
         }
     }

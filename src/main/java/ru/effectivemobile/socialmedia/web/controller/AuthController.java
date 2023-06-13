@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
+@Slf4j
 @RequestMapping("api/auth")
 @CrossOrigin(origins = "*", maxAge = 3600)
 @Tag(name = "Authentication Controller", description = "Registration and authorization")
@@ -52,11 +54,10 @@ public class AuthController {
                     "and the data of an authorized user"
     )
     public ResponseEntity<?> authUser(@RequestBody @Valid LoginRequest loginRequest) {
-
+        log.info("New authorization request from user: {}", loginRequest.getUsername());
         String jwt;
         UserDetailsImpl userDetails;
         List<String> roles;
-
         try {
             Authentication authentication = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(
@@ -71,10 +72,10 @@ public class AuthController {
                     .map(GrantedAuthority::getAuthority)
                     .collect(Collectors.toList());
         } catch (AuthenticationException e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
-
+        log.info("Authorization was successful");
         return ResponseEntity.ok(new JwtResponse(jwt,
                 userDetails.getId(),
                 userDetails.getUsername(),
@@ -91,28 +92,27 @@ public class AuthController {
                     "Performs validation and returns result in String format nested in MessageResponse object"
     )
     public ResponseEntity<?> registerUser(@RequestBody SignupRequest signupRequest) {
-
+        log.info("New registration request from client");
         if (userRepository.existsByUsername(signupRequest.getUsername())) {
+            log.warn("Username-{} exists", signupRequest.getUsername());
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Username exists"));
         }
-
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
+            log.warn("Email-{} exists", signupRequest.getEmail());
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Email exists"));
         }
-
         User user = new User();
 
         try {
             user.setUsername(signupRequest.getUsername());
             user.setEmail(signupRequest.getEmail());
-            System.out.println(signupRequest.getPassword());
             user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
         } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
 
@@ -150,6 +150,7 @@ public class AuthController {
         }
         user.setRoles(roles);
         userRepository.save(user);
+        log.info("Registration was successful. New User saved to the database: {}", user.getUsername());
         return ResponseEntity.ok(new MessageResponse("User has been successfully created"));
     }
 }
